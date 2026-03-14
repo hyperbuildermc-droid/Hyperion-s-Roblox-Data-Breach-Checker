@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HYPERION | KEY SYSTEM</title>
     <style>
-        /* Keep original body logic - added z-index to ensure particles stay behind */
+        /* Keep original body logic */
         body { 
             display: none; 
-            background-color: #050505; 
+            background-color: #030303; 
             color: #ff0000; 
             font-family: 'Courier New', monospace; 
             margin: 0; 
@@ -21,14 +21,14 @@
             position: relative;
         }
 
-        /* Interactive Canvas Styling */
         #bg-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1; /* Behind everything */
+            z-index: 1;
+            opacity: 0.4; /* Subtle backdrop rain */
         }
 
         /* Keep original Scanline Animation */
@@ -37,123 +37,131 @@
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 2; /* Above particles, below box */
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.04), rgba(0, 0, 0, 0), rgba(255, 0, 0, 0.04));
+            z-index: 2;
             background-size: 100% 2px, 3px 100%;
             pointer-events: none;
         }
 
         .box { 
-            border: 1px solid #330000; 
-            padding: 50px; 
-            background: rgba(10, 10, 10, 0.9); /* Slight transparency to see particles */
-            box-shadow: 0 0 30px rgba(255, 0, 0, 0.15), inset 0 0 10px #000; 
+            border: 2px solid #ff0000; 
+            padding: 40px; 
+            background: rgba(5, 5, 5, 0.95);
+            box-shadow: 0 0 40px rgba(255, 0, 0, 0.2), inset 0 0 20px rgba(0,0,0,1); 
             position: relative;
-            z-index: 3; /* Above everything */
-            max-width: 500px;
-            width: 90%;
+            z-index: 3;
+            max-width: 480px;
+            width: 85%;
             text-align: center;
-            backdrop-filter: blur(5px); /* Professional frosted glass look */
+            border-radius: 0; /* Industrial sharp edges */
         }
 
-        /* Keep original Top Red Accent Line */
-        .box::before {
+        /* Glitchy glow effect for the box corners */
+        .box::after {
             content: "";
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 3px;
-            background: #ff0000;
-            box-shadow: 0 0 15px #ff0000;
+            top: -5px; left: -5px; right: -5px; bottom: -5px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            z-index: -1;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.02); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         h1 { 
-            letter-spacing: 12px; 
-            text-shadow: 0 0 10px #ff0000; 
+            letter-spacing: 15px; 
+            text-shadow: 3px 3px #550000; 
             margin: 0;
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             text-transform: uppercase; 
+            font-weight: 900;
         }
 
         .subtitle { 
-            color: #666; 
-            font-size: 11px; 
-            margin-bottom: 30px; 
-            letter-spacing: 4px; 
+            color: #ff0000; 
+            font-size: 10px; 
+            margin-bottom: 25px; 
+            letter-spacing: 5px; 
             text-transform: uppercase;
+            opacity: 0.7;
         }
 
         .status-badge {
-            font-size: 10px;
-            color: #00ff00;
-            border: 1px solid #00ff00;
-            padding: 2px 8px;
+            font-size: 11px;
+            color: #000;
+            background: #00ff00;
+            padding: 4px 12px;
             display: inline-block;
-            margin-bottom: 20px;
-            text-shadow: 0 0 5px #00ff00;
+            margin-bottom: 25px;
+            font-weight: bold;
+            box-shadow: 0 0 10px #00ff00;
         }
 
         .key-container { 
             background: #000; 
-            border: 1px dashed #440000; 
-            padding: 20px; 
+            border: 1px solid #ff0000; 
+            padding: 25px; 
             margin: 20px 0; 
             position: relative;
+            overflow: hidden;
         }
 
         #key-text { 
-            font-size: 20px; 
+            font-size: 22px; 
             color: #fff; 
             font-weight: bold; 
-            letter-spacing: 3px; 
+            letter-spacing: 4px; 
             word-break: break-all;
+            position: relative;
+            z-index: 4;
         }
 
         button { 
             background: #ff0000; 
             color: #000; 
-            border: none; 
-            padding: 12px 30px; 
-            font-family: monospace; 
-            font-weight: bold; 
+            border: 2px solid #ff0000; 
+            padding: 15px 40px; 
+            font-family: 'Courier New', monospace; 
+            font-weight: 900; 
             cursor: pointer; 
-            transition: all 0.3s ease; 
-            margin-top: 10px; 
+            transition: 0.2s; 
+            margin-top: 15px; 
             text-transform: uppercase; 
-            letter-spacing: 2px;
-            clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+            letter-spacing: 3px;
         }
 
         button:hover { 
-            background: #fff; 
+            background: transparent; 
+            color: #ff0000;
             box-shadow: 0 0 20px #ff0000;
-            transform: scale(1.05);
         }
 
-        .footer-info { color: #444; font-size: 10px; margin-top: 25px; line-height: 1.6; }
-        .discord-link { color: #5865F2; text-decoration: none; font-weight: bold; }
-        .discord-link:hover { text-decoration: underline; }
+        .footer-info { color: #555; font-size: 11px; margin-top: 30px; border-top: 1px solid #222; padding-top: 15px; }
+        .discord-link { color: #fff; text-decoration: none; border-bottom: 1px solid #ff0000; }
 
-        /* Keep original Access Denied Style */
+        /* Access Denied Style */
         .denied-screen { 
             display: flex !important; 
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background-color: #050505; 
+            background-color: #000; 
             color: red; 
             height: 100vh;
             width: 100vw;
             z-index: 10;
         }
 
-        .denied-screen h1 { animation: glitch 1s infinite; }
+        .denied-screen h1 { animation: glitch 0.2s infinite; }
 
         @keyframes glitch {
-            0% { transform: translate(0); }
-            20% { transform: translate(-2px, 2px); }
-            40% { transform: translate(-2px, -2px); }
-            60% { transform: translate(2px, 2px); }
-            80% { transform: translate(2px, -2px); }
-            100% { transform: translate(0); }
+            0% { clip: rect(42px, 9999px, 44px, 0); transform: skew(0.5deg); }
+            50% { clip: rect(12px, 9999px, 56px, 0); transform: skew(0.2deg); }
+            100% { clip: rect(67px, 9999px, 86px, 0); transform: skew(0.8deg); }
         }
     </style>
 </head>
@@ -162,133 +170,79 @@
     <canvas id="bg-canvas"></canvas>
 
     <div id="main-content" class="box">
-        <div class="status-badge">SECURE CONNECTION ESTABLISHED</div>
+        <div class="status-badge">SYSTEMS ONLINE: ENCRYPTED</div>
         <h1>HYPERION</h1>
-        <div class="subtitle">Nexus Key Interface v2.1</div>
+        <div class="subtitle">CORE INTERFACE // V2.1</div>
         
-        <p style="font-size: 12px; color: #aaa;">GENERATING ACCESS TOKEN...</p>
+        <p style="font-size: 11px; color: #666; margin-bottom: 10px;">ID: 77-ALPHA-992</p>
         
         <div class="key-container">
             <div id="key-text">XHYPERION1STKEY2K26</div>
         </div>
         
-        <button onclick="copyKey()">Initialize Copy</button>
+        <button onclick="copyKey()">Copy Protocol</button>
         
         <div class="footer-info">
-            VALID FOR: <span style="color: #ff0000;">48 HOURS</span><br>
-            ENCRYPTION: AES-256 ROB-HEX<br>
+            EXPIRATION: <span style="color: #fff;">48H</span> | 
+            NODE: <span style="color: #fff;">US-CENTRAL</span><br>
             <br>
-            Join the collective: <a href="https://discord.gg/zdcHCyjR7K" class="discord-link">DISCORD SERVER</a>
+            <a href="https://discord.gg/zdcHCyjR7K" class="discord-link">JOIN DISCORD</a>
         </div>
     </div>
 
     <script>
-        // BACKGROUND INTERACTIVE SCRIPT
+        // MATRIX RAIN SCRIPT
         const canvas = document.getElementById('bg-canvas');
         const ctx = canvas.getContext('2d');
-        let particles = [];
-        const mouse = { x: null, y: null, radius: 150 };
 
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.x;
-            mouse.y = e.y;
-        });
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%'\"#&_(),.;:?!\\|{}<>[]^~";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+
+        const rainDrops = [];
+
+        for( let x = 0; x < columns; x++ ) {
+            rainDrops[x] = 1;
         }
-        window.addEventListener('resize', resize);
-        resize();
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 1;
-                this.baseX = this.x;
-                this.baseY = this.y;
-                this.density = (Math.random() * 30) + 1;
-            }
-            draw() {
-                ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.closePath();
-                ctx.fill();
-            }
-            update() {
-                let dx = mouse.x - this.x;
-                let dy = mouse.y - this.y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
-                let forceDirectionX = dx / distance;
-                let forceDirectionY = dy / distance;
-                let maxDistance = mouse.radius;
-                let force = (maxDistance - distance) / maxDistance;
-                let directionX = forceDirectionX * force * this.density;
-                let directionY = forceDirectionY * force * this.density;
+        const draw = () => {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-                if (distance < mouse.radius) {
-                    this.x -= directionX;
-                    this.y -= directionY;
-                } else {
-                    if (this.x !== this.baseX) {
-                        let dx = this.x - this.baseX;
-                        this.x -= dx / 10;
-                    }
-                    if (this.y !== this.baseY) {
-                        let dy = this.y - this.baseY;
-                        this.y -= dy / 10;
-                    }
+            ctx.fillStyle = '#ff0000';
+            ctx.font = fontSize + 'px monospace';
+
+            for(let i = 0; i < rainDrops.length; i++) {
+                const text = alphabet.charAt(Math.floor(Math.random() * alphabet.alphabet));
+                ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                if(rainDrops[i] * fontSize > canvas.height && Math.random() > 0.975){
+                    rainDrops[i] = 0;
                 }
+                rainDrops[i]++;
             }
-        }
+        };
 
-        function init() {
-            particles = [];
-            for (let i = 0; i < 100; i++) {
-                particles.push(new Particle());
-            }
-        }
-        init();
+        setInterval(draw, 30);
 
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-                particles[i].draw();
-                
-                for (let j = i; j < particles.length; j++) {
-                    let dx = particles[i].x - particles[j].x;
-                    let dy = particles[i].y - particles[j].y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < 100) {
-                        ctx.strokeStyle = 'rgba(255, 0, 0, ' + (1 - distance/100) * 0.2 + ')';
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        // 1. ORIGINAL Copy Function with Visual Feedback
+        // 1. ORIGINAL Copy Function
         function copyKey() {
             const text = document.getElementById("key-text").innerText;
             const btn = document.querySelector("button");
             
             navigator.clipboard.writeText(text).then(() => {
                 const originalText = btn.innerText;
-                btn.innerText = "COPIED TO SYSTEM";
+                btn.innerText = "ACCESS COPIED";
                 btn.style.background = "#00ff00";
+                btn.style.borderColor = "#00ff00";
                 
                 setTimeout(() => {
                     btn.innerText = originalText;
                     btn.style.background = "#ff0000";
+                    btn.style.borderColor = "#ff0000";
                 }, 2000);
             });
         }
@@ -303,15 +257,20 @@
             } else {
                 document.body.innerHTML = `
                     <div class="denied-screen">
-                        <h1>ACCESS DENIED</h1>
-                        <p style="color:white; font-family:monospace; margin: 5px;">ILLEGAL ENTRY ATTEMPT DETECTED</p>
-                        <p style="color:red; font-family:monospace; font-size: 12px;">Please use the official Linkvertise gateway to generate a session key.</p>
-                        <button onclick="window.location.reload()" style="margin-top:20px; clip-path:none;">RETRY HANDSHAKE</button>
+                        <h1 style="letter-spacing: 2px;">ACCESS DENIED</h1>
+                        <p style="color:white; font-family:monospace; margin: 10px;">SECURE CHANNEL NOT DETECTED</p>
+                        <p style="color:red; font-family:monospace; font-size: 12px; max-width: 300px; text-align:center;">Return to the official link to complete verification.</p>
+                        <button onclick="window.location.reload()" style="margin-top:30px;">RE-VERIFY</button>
                     </div>
                 `;
                 document.body.style.display = "flex";
             }
         })();
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
     </script>
 </body>
 </html>
