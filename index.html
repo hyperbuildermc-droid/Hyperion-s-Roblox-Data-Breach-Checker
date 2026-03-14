@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HYPERION | KEY SYSTEM</title>
     <style>
-        /* Hidden by default for security check */
+        /* Keep original body logic - added z-index to ensure particles stay behind */
         body { 
             display: none; 
             background-color: #050505; 
@@ -18,16 +18,27 @@
             justify-content: center;
             overflow: hidden;
             flex-direction: column;
+            position: relative;
         }
 
-        /* Scanline Animation */
+        /* Interactive Canvas Styling */
+        #bg-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1; /* Behind everything */
+        }
+
+        /* Keep original Scanline Animation */
         body::before {
             content: " ";
             display: block;
             position: absolute;
             top: 0; left: 0; bottom: 0; right: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 2;
+            z-index: 2; /* Above particles, below box */
             background-size: 100% 2px, 3px 100%;
             pointer-events: none;
         }
@@ -35,16 +46,17 @@
         .box { 
             border: 1px solid #330000; 
             padding: 50px; 
-            background: #0a0a0a; 
+            background: rgba(10, 10, 10, 0.9); /* Slight transparency to see particles */
             box-shadow: 0 0 30px rgba(255, 0, 0, 0.15), inset 0 0 10px #000; 
             position: relative;
-            z-index: 3;
+            z-index: 3; /* Above everything */
             max-width: 500px;
             width: 90%;
             text-align: center;
+            backdrop-filter: blur(5px); /* Professional frosted glass look */
         }
 
-        /* Top Red Accent Line */
+        /* Keep original Top Red Accent Line */
         .box::before {
             content: "";
             position: absolute;
@@ -120,7 +132,7 @@
         .discord-link { color: #5865F2; text-decoration: none; font-weight: bold; }
         .discord-link:hover { text-decoration: underline; }
 
-        /* Access Denied Style */
+        /* Keep original Access Denied Style */
         .denied-screen { 
             display: flex !important; 
             flex-direction: column;
@@ -130,6 +142,7 @@
             color: red; 
             height: 100vh;
             width: 100vw;
+            z-index: 10;
         }
 
         .denied-screen h1 { animation: glitch 1s infinite; }
@@ -145,6 +158,8 @@
     </style>
 </head>
 <body>
+
+    <canvas id="bg-canvas"></canvas>
 
     <div id="main-content" class="box">
         <div class="status-badge">SECURE CONNECTION ESTABLISHED</div>
@@ -168,7 +183,100 @@
     </div>
 
     <script>
-        // 1. Copy Function with Visual Feedback
+        // BACKGROUND INTERACTIVE SCRIPT
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const mouse = { x: null, y: null, radius: 150 };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.x;
+            mouse.y = e.y;
+        });
+
+        function resize() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.baseX = this.x;
+                this.baseY = this.y;
+                this.density = (Math.random() * 30) + 1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(255, 0, 0, 0.8)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.closePath();
+                ctx.fill();
+            }
+            update() {
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                let forceDirectionX = dx / distance;
+                let forceDirectionY = dy / distance;
+                let maxDistance = mouse.radius;
+                let force = (maxDistance - distance) / maxDistance;
+                let directionX = forceDirectionX * force * this.density;
+                let directionY = forceDirectionY * force * this.density;
+
+                if (distance < mouse.radius) {
+                    this.x -= directionX;
+                    this.y -= directionY;
+                } else {
+                    if (this.x !== this.baseX) {
+                        let dx = this.x - this.baseX;
+                        this.x -= dx / 10;
+                    }
+                    if (this.y !== this.baseY) {
+                        let dy = this.y - this.baseY;
+                        this.y -= dy / 10;
+                    }
+                }
+            }
+        }
+
+        function init() {
+            particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+        }
+        init();
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < 100) {
+                        ctx.strokeStyle = 'rgba(255, 0, 0, ' + (1 - distance/100) * 0.2 + ')';
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // 1. ORIGINAL Copy Function with Visual Feedback
         function copyKey() {
             const text = document.getElementById("key-text").innerText;
             const btn = document.querySelector("button");
@@ -185,10 +293,9 @@
             });
         }
 
-        // 2. THE BYPASS BLOCK (Modified for instant display logic)
+        // 2. ORIGINAL THE BYPASS BLOCK
         (function() {
             const ref = document.referrer;
-            // AUTHORIZATION CHECK
             const isAuthorized = ref.includes("linkvertise.com") || ref.includes("link-target.net") || window.location.hostname === "localhost";
             
             if (isAuthorized) {
