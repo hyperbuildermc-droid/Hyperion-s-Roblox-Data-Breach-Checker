@@ -4,7 +4,18 @@
     <meta charset="UTF-8">
     <title>HYPERION | KEY SYSTEM</title>
     <style>
-        body { background-color: #0b0b0b; color: #ff0000; font-family: 'Courier New', monospace; text-align: center; padding-top: 100px; margin: 0; overflow: hidden; }
+        /* This line makes the page INVISIBLE until the script says it's okay */
+        body { 
+            display: none; 
+            background-color: #0b0b0b; 
+            color: #ff0000; 
+            font-family: 'Courier New', monospace; 
+            text-align: center; 
+            padding-top: 100px; 
+            margin: 0; 
+            overflow: hidden; 
+        }
+
         .box { border: 1px solid #333; display: inline-block; padding: 40px; background: #111; box-shadow: 0 0 20px rgba(255, 0, 0, 0.1); border-radius: 2px; }
         h1 { letter-spacing: 8px; text-shadow: 2px 2px #550000; margin-bottom: 5px; text-transform: uppercase; }
         .subtitle { color: #444; font-size: 12px; margin-bottom: 30px; letter-spacing: 2px; }
@@ -12,13 +23,16 @@
         #key-text { font-size: 22px; color: #fff; font-weight: bold; letter-spacing: 2px; }
         button { background: #ff0000; color: #000; border: none; padding: 10px 20px; font-family: monospace; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; text-transform: uppercase; }
         button:hover { background: #fff; box-shadow: 0 0 15px #ff0000; }
+        
+        /* Style for the Access Denied screen so it's not invisible */
+        .denied-screen { display: block !important; background-color: #0b0b0b; color: red; padding-top: 100px; }
     </style>
 </head>
 <body>
 
     <div id="main-content" class="box">
         <h1>HYPERION</h1>
-        <div class="subtitle">SECURITY INTERFACE v1.1</div>
+        <div class="subtitle">SECURITY INTERFACE v1.2</div>
         <p>ACTIVE SESSION DETECTED</p>
         <div class="key-container">
             <div id="key-text">XHYPERION1STKEY2K26</div>
@@ -35,22 +49,27 @@
             alert("ACCESS KEY COPIED");
         }
 
-        // 2. THE BYPASS BLOCK
-        window.onload = function() {
+        // 2. THE IMPROVED BYPASS BLOCK
+        (function() {
             const ref = document.referrer;
-            // This checks if the user came from Linkvertise
+            // Check if the user came from Linkvertise
             const isAuthorized = ref.includes("linkvertise.com") || ref.includes("link-target.net");
             
-            if (!isAuthorized) {
+            if (isAuthorized) {
+                // If they ARE authorized, make the body visible
+                document.body.style.display = "block";
+            } else {
+                // If NOT authorized, replace the content and make it visible
                 document.body.innerHTML = `
-                    <div style="padding-top:100px;">
-                        <h1 style="color:red; font-family:monospace;">ACCESS DENIED</h1>
-                        <p style="color:white; font-family:monospace;">Direct access to this page is prohibited.</p>
-                        <p style="color:red; font-family:monospace;">Please go through the official Linkvertise link.</p>
+                    <div class="denied-screen">
+                        <h1 style="letter-spacing: 2px;">ACCESS DENIED</h1>
+                        <p style="color:white; font-family:monospace;">Direct access is prohibited.</p>
+                        <p style="color:red; font-family:monospace;">Please use the official link to generate a key.</p>
                     </div>
                 `;
+                document.body.style.display = "block";
             }
-        }
+        })();
     </script>
 </body>
 </html>
