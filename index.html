@@ -24,27 +24,30 @@
             <div id="key-text">XHYPERION1STKEY2K26</div>
         </div>
         <button onclick="copyKey()">Copy Access Key</button>
-        <p style="color: #444; font-size: 10px; margin-top: 20px;">VALID FOR 24 HOURS • DO NOT SHARE</p>
+        <p style="color: #444; font-size: 10px; margin-top: 20px;">VALID FOR 48 HOURS • DO NOT SHARE</p>
     </div>
 
     <script>
+        // 1. Copy Function
         function copyKey() {
             const text = document.getElementById("key-text").innerText;
             navigator.clipboard.writeText(text);
             alert("ACCESS KEY COPIED");
         }
 
-        // ANTI-BYPASS: This hides the content if they aren't coming from Linkvertise
+        // 2. THE BYPASS BLOCK
         window.onload = function() {
             const ref = document.referrer;
-            const isLinkvertise = ref.includes("linkvertise.com") || ref.includes("link-target.net");
+            // This checks if the user came from Linkvertise
+            const isAuthorized = ref.includes("linkvertise.com") || ref.includes("link-target.net");
             
-            // If you are testing locally or via direct link, it will hide.
-            if (!isLinkvertise) {
-                document.getElementById("main-content").innerHTML = `
-                    <h1 style="color:red;">UNAUTHORIZED ACCESS</h1>
-                    <p style="color:white;">Direct entry is prohibited.</p>
-                    <p>Please use the official Linkvertise gateway.</p>
+            if (!isAuthorized) {
+                document.body.innerHTML = `
+                    <div style="padding-top:100px;">
+                        <h1 style="color:red; font-family:monospace;">ACCESS DENIED</h1>
+                        <p style="color:white; font-family:monospace;">Direct access to this page is prohibited.</p>
+                        <p style="color:red; font-family:monospace;">Please go through the official Linkvertise link.</p>
+                    </div>
                 `;
             }
         }
